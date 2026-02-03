@@ -1,1 +1,11 @@
 /target/
+test-output/
+*.log
+*.png
+*.gif
+
+# Eclipse
+.settings/
+
+# OS
+.DS_Store

@@ -1,8 +1,16 @@
-<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="Taj Automation Suite">
+
+    <!-- Listener for Extent Reports + Screenshot on Failure -->
+    <listeners>
+        <listener class-name="com.tajhotels.automation.listeners.TestListener"/>
+    </listeners>
+
     <test name="Smoke Suite">
+        <!-- Run all tests under this package -->
         <packages>
             <package name="com.tajhotels.automation.tests"/>
         </packages>
     </test>
+
 </suite>

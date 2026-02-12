@@ -1,20 +1,23 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="Taj Automation Suite">
+<suite name="Taj Automation Suite"
+       verbose="1"
+       configfailurepolicy="continue">
 
-    <!-- Listener for Extent Reports + Screenshot on Failure -->
+    <!-- Disable default TestNG reports -->
     <listeners>
         <listener class-name="com.tajhotels.automation.listeners.TestListener"/>
     </listeners>
 
-    <test name="Smoke Suite">
-   <!--      <packages>
-            <package name="com.tajhotels.automation.tests"/>
-        </packages> -->
-
-        <!-- Exclude intentionally failing demo test -->
-        <classes>
-            <class name="com.tajhotels.automation.tests.BaseTestDemo"></class>
+  <test name="Smoke Suite">
+  <!--   <packages>
+      <package name="com.tajhotels.automation.tests">
+        <exclude name="com.tajhotels.automation.tests.FailingDemoTest"/>
+      </package>
+    </packages>
+     -->
+    <classes>
+            <class name="com.tajhotels.automation.tests.BaseTestDemo"/>
         </classes>
-    </test>
+  </test>
 
 </suite>

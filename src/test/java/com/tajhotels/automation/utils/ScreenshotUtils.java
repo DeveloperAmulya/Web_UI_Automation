@@ -6,8 +6,7 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.nio.file.Path;
 
 public final class ScreenshotUtils {
 
@@ -19,13 +18,14 @@ public final class ScreenshotUtils {
 
             File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 
-            String time = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            String dir = "test-output/screenshots/";
-            String path = dir + testName + "_" + time + ".png";
+            String safeName = testName.replaceAll("[^a-zA-Z0-9._-]", "_");
+            String fileName = safeName + "_" + RunContext.nowTs() + ".png";
 
-            new File(dir).mkdirs();
-            FileUtils.copyFile(src, new File(path));
-            return path;
+            Path dest = RunContext.screenshotDir().resolve(fileName);
+            FileUtils.copyFile(src, dest.toFile());
+
+            // return absolute path so Extent can load it reliably
+            return dest.toString();
         } catch (Exception e) {
             return null;
         }

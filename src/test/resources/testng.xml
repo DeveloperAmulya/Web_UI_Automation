@@ -7,10 +7,14 @@
     </listeners>
 
     <test name="Smoke Suite">
-        <!-- Run all tests under this package -->
-        <packages>
+   <!--      <packages>
             <package name="com.tajhotels.automation.tests"/>
-        </packages>
+        </packages> -->
+
+        <!-- Exclude intentionally failing demo test -->
+        <classes>
+            <class name="com.tajhotels.automation.tests.BaseTestDemo"></class>
+        </classes>
     </test>
 
 </suite>

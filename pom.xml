@@ -1,63 +1,108 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.tajhotels.automation</groupId>
   <artifactId>taj-ui-automation</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-</properties>
 
-<dependencies>
+    <selenium.version>4.40.0</selenium.version>
+    <testng.version>7.9.0</testng.version>
+    <webdrivermanager.version>5.9.2</webdrivermanager.version>
+    <extentreports.version>5.1.2</extentreports.version>
+    <commonsio.version>2.16.1</commonsio.version>
+    <slf4j.simple.version>2.0.13</slf4j.simple.version>
+    <surefire.version>3.2.5</surefire.version>
+  </properties>
 
-    <dependency>
+  <!-- Keep selenium artifacts aligned -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-java</artifactId>
-        <version>4.27.0</version>
-    </dependency>
+        <artifactId>selenium-bom</artifactId>
+        <version>${selenium.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
+  <dependencies>
+
+    <!-- Selenium -->
     <dependency>
-        <groupId>org.testng</groupId>
-        <artifactId>testng</artifactId>
-        <version>7.9.0</version>
-        <scope>test</scope>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
     </dependency>
 
-<dependency>
-  <groupId>io.github.bonigarcia</groupId>
-  <artifactId>webdrivermanager</artifactId>
-  <version>5.9.2</version>
-</dependency>
+    <!-- Optional: nearest available CDP module (Chrome 145 -> v144 is closest) -->
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-devtools-v144</artifactId>
+    </dependency>
 
-<!-- Extent Reports -->
-<dependency>
-  <groupId>com.aventstack</groupId>
-  <artifactId>extentreports</artifactId>
-  <version>5.1.1</version>
-</dependency>
+    <!-- TestNG -->
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>${testng.version}</version>
+      <scope>test</scope>
+    </dependency>
 
-<!-- For saving screenshot files -->
-<dependency>
-  <groupId>commons-io</groupId>
-  <artifactId>commons-io</artifactId>
-  <version>2.16.1</version>
-</dependency>
+    <!-- WebDriverManager -->
+    <dependency>
+      <groupId>io.github.bonigarcia</groupId>
+      <artifactId>webdrivermanager</artifactId>
+      <version>${webdrivermanager.version}</version>
+    </dependency>
 
-</dependencies>
-<build>
+    <!-- Extent Reports -->
+    <dependency>
+      <groupId>com.aventstack</groupId>
+      <artifactId>extentreports</artifactId>
+      <version>${extentreports.version}</version>
+    </dependency>
+
+    <!-- Commons IO -->
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commonsio.version}</version>
+    </dependency>
+
+    <!-- Fix SLF4J StaticLoggerBinder warning -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>${slf4j.simple.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
     <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>3.2.5</version>
-            <configuration>
-                <suiteXmlFiles>
-                    <suiteXmlFile>testng.xml</suiteXmlFile>
-                </suiteXmlFiles>
-            </configuration>
-        </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${surefire.version}</version>
+        <configuration>
+          <suiteXmlFiles>
+            <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+          </suiteXmlFiles>
+
+          <!-- Option B: suppress Selenium CDP warnings using java.util.logging -->
+          <argLine>-Djava.util.logging.config.file=${project.basedir}/src/test/resources/logging.properties</argLine>
+        </configuration>
+      </plugin>
     </plugins>
-</build>
+  </build>
 
 </project>

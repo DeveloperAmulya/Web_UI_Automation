@@ -16,25 +16,30 @@ public class BaseTest {
     @BeforeMethod(alwaysRun = true)
     public void setUp(@Optional String testngBrowser) {
 
-        // 1) Create driver using BrowserFactory
+        // 1) Create WebDriver instance
         WebDriver driver = BrowserFactory.createDriver(testngBrowser);
 
-        // 2) Store driver centrally using DriverFactory
+        // 2) Store driver in ThreadLocal
         DriverFactory.setDriver(driver);
 
-        // 3) Validate driver is stored
+        // 3) Validate driver creation
         Assert.assertNotNull(
                 DriverFactory.getDriver(),
-                "Driver is NULL after setup"
+                "WebDriver initialization failed"
         );
 
-        // 4) Launch application
+        // 4) Maximize browser window (as requested)
+        try {
+            DriverFactory.getDriver().manage().window().maximize();
+        } catch (Exception ignored) {}
+
+        // 5) Launch application
         String baseUrl = ConfigReader.get("baseUrl");
         DriverFactory.getDriver().get(baseUrl);
 
-        // 5) Optional validation that app is launched
+        // 6) Light sanity check (do NOT hardcode exact URL)
         Assert.assertTrue(
-                DriverFactory.getDriver().getCurrentUrl().contains("taj"),
+                DriverFactory.getDriver().getCurrentUrl().toLowerCase().contains("taj"),
                 "Application URL not loaded correctly"
         );
     }
@@ -42,18 +47,18 @@ public class BaseTest {
     @AfterMethod(alwaysRun = true)
     public void tearDown() {
 
-        // 6) Quit browser if exists
+        // 7) Quit browser safely
         if (DriverFactory.getDriver() != null) {
             DriverFactory.getDriver().quit();
         }
 
-        // 7) Clear ThreadLocal
+        // 8) Clear ThreadLocal reference
         DriverFactory.unload();
 
-        // 8) Verify cleanup
+        // 9) Final validation of cleanup
         Assert.assertNull(
                 DriverFactory.getDriver(),
-                "Driver not cleaned up properly after test"
+                "WebDriver was not cleaned up properly"
         );
     }
 }

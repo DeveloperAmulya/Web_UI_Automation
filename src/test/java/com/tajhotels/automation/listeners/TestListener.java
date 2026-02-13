@@ -4,6 +4,7 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.tajhotels.automation.driver.DriverFactory;
 import com.tajhotels.automation.reports.ExtentManager;
+import com.tajhotels.automation.reports.ExtentTestManager;
 import com.tajhotels.automation.utils.ConfigReader;
 import com.tajhotels.automation.utils.RunContext;
 import com.tajhotels.automation.utils.ScreenshotUtils;
@@ -15,7 +16,7 @@ public class TestListener implements ITestListener, ISuiteListener {
 
     @Override
     public void onStart(ISuite suite) {
-        RunContext.runBase(); // create folders
+        RunContext.runBase();
 
         ExtentManager.getExtent().setSystemInfo("Browser", ConfigReader.get("browser"));
         ExtentManager.getExtent().setSystemInfo("Env", System.getProperty("env", "default"));
@@ -31,14 +32,31 @@ public class TestListener implements ITestListener, ISuiteListener {
     @Override
     public void onTestStart(ITestResult result) {
         String testName = result.getMethod().getMethodName();
+
         ExtentTest test = ExtentManager.getExtent().createTest(testName);
         tlTest.set(test);
-        tlTest.get().log(Status.INFO, "Test Started: " + testName);
+        ExtentTestManager.set(test);
+
+        test.log(Status.INFO, "Test Started : " + testName);
     }
 
     @Override
     public void onTestSuccess(ITestResult result) {
         tlTest.get().log(Status.PASS, "Test Passed");
+
+        // Overall screenshot after method completion
+        String path = ScreenshotUtils.takeScreenshot(
+                DriverFactory.getDriver(),
+                result.getMethod().getMethodName() + "_OVERALL"
+        );
+
+        if (path != null) {
+            try {
+                tlTest.get().addScreenCaptureFromPath(path, "Overall Screenshot");
+            } catch (Exception ignored) {}
+        }
+
+        ExtentTestManager.remove();
         tlTest.remove();
     }
 
@@ -49,7 +67,7 @@ public class TestListener implements ITestListener, ISuiteListener {
 
         String screenshotPath = ScreenshotUtils.takeScreenshot(
                 DriverFactory.getDriver(),
-                result.getMethod().getMethodName()
+                result.getMethod().getMethodName() + "_FAIL"
         );
 
         if (screenshotPath != null) {
@@ -58,15 +76,19 @@ public class TestListener implements ITestListener, ISuiteListener {
             } catch (Exception ignored) {}
         }
 
+        ExtentTestManager.remove();
         tlTest.remove();
     }
 
     @Override
     public void onTestSkipped(ITestResult result) {
         tlTest.get().log(Status.SKIP, "Test Skipped");
+
         if (result.getThrowable() != null) {
             tlTest.get().skip(result.getThrowable());
         }
+
+        ExtentTestManager.remove();
         tlTest.remove();
     }
 }

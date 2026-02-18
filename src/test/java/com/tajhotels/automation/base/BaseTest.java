@@ -5,7 +5,9 @@ import com.tajhotels.automation.driver.DriverFactory;
 import com.tajhotels.automation.utils.ConfigReader;
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
@@ -13,7 +15,7 @@ import org.testng.annotations.Parameters;
 public class BaseTest {
 
     @Parameters({"browser"})
-    @BeforeMethod(alwaysRun = true)
+    @BeforeClass(alwaysRun = true)
     public void setUp(@Optional String testngBrowser) {
 
         // 1) Create WebDriver instance
@@ -44,7 +46,7 @@ public class BaseTest {
         );
     }
 
-    @AfterMethod(alwaysRun = true)
+    @AfterClass(alwaysRun = true)
     public void tearDown() {
 
         // 7) Quit browser safely

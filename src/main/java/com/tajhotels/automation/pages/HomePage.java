@@ -15,14 +15,14 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HomePage {
 	
-	private static WebDriver driver;
-	private static WebDriverWait wait;
+	private  WebDriver driver;
+	private  WebDriverWait wait;
 	
 	// ==========Locators================//
 	
 	//logo 
 	@FindBy(xpath = "//img[@alt='taj-logo']")
-	private static WebElement logo;
+	private  WebElement logo;
 	
 	//global search icon 
 	@FindBy(xpath = "")
@@ -32,25 +32,23 @@ public class HomePage {
 	@FindBy(xpath = "")
 	private WebElement BookaStayWidget;
 	
+	//destination link 
+	@FindBy(xpath="//a[normalize-space()='DESTINATIONS']")
+	private WebElement HeaderDestinations;
 	
-	// more dropdown
-	@FindBy(xpath = "//span[text()='MORE']")
-	private WebElement moreDropDown;
+	//hotels link 
+	@FindBy(xpath="//a[normalize-space()='HOTELS']")
+	private WebElement HeaderHotels;
+	
+	//Experiences link 
+	@FindBy(xpath ="//a[normalize-space()='EXPERIENCES']")
+	private WebElement HeaderExperiences;
+	
+	//Offers link 
+	@FindBy(xpath = "//a[normalize-space()='OFFERS']")
+	private WebElement HeaderOffers;
 	
 	
-	//latest offers text
-	@FindBy(xpath = "//span[text()='Latest Offers']")
-	private WebElement latestOffersText;
-	
-	
-	//exclusivly for you text
-	@FindBy(xpath = "//span[text()='Exclusively']")
-	private WebElement ExclusivelyForYouText;
-	
-	
-	//explore more text
-	@FindBy(xpath = "//span[text()='Explore']")
-	private WebElement ExploreMoreText;
 
 	
 	//IHCL on footer text
@@ -59,11 +57,14 @@ public class HomePage {
 	
 	// Use a stable element that confirms page is loaded
     @FindBy(tagName = "body")
-    private static WebElement pageBody;// (Optional) cookie accept button – may appear and block logo
-    private final static By cookieAcceptBtn = By.xpath(
+    private  WebElement pageBody;// (Optional) cookie accept button – may appear and block logo
+    
+    private By cookieAcceptBtn = By.xpath(
             "//*[self::button or self::a][contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'accept') " +
                     "or contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'agree')]"
     );
+    
+    
 
     // ============== CONSTRUCTOR ==============
     public HomePage(WebDriver driver) {
@@ -74,7 +75,7 @@ public class HomePage {
 
     // ============== PRIVATE HELPERS ==============
 
-    private static void tryAcceptCookiesIfPresent() {
+    private void tryAcceptCookiesIfPresent() {
         try {
             WebElement btn = driver.findElement(cookieAcceptBtn);
             if (btn.isDisplayed()) {
@@ -90,7 +91,7 @@ public class HomePage {
      * 2) title not empty
      * 3) try for logo visible (if cookie blocks, we handle it)
      */
-    private static void waitForHomePageToLoad() throws TimeoutException {
+    private void waitForHomePageToLoad() throws TimeoutException {
         wait.until(ExpectedConditions.visibilityOf(pageBody));
 
 		// Sometimes title is empty for a moment → wait for non-empty title
@@ -114,8 +115,10 @@ public class HomePage {
 
     // ============== METHODS ==============
 
-    /** Verify Home Page landed successfully */
-    public static boolean homePageLanded() {
+    
+    //TC_HP_001
+    //Verify homepage loads successfully
+    public boolean homePageLoad() {
         try {
             waitForHomePageToLoad();
             String title = driver.getTitle();
@@ -127,7 +130,7 @@ public class HomePage {
     }
 
     /** Verify Taj logo is displayed */
-    public static boolean logoDisplayed() {
+    public boolean logoDisplayed() {
         try {
             waitForHomePageToLoad();
             return logo.isDisplayed();
@@ -137,7 +140,7 @@ public class HomePage {
     }
 
     /** Get Home Page title */
-    public static String titleHomePage() {
+    public String titleHomePage() {
         try {
             waitForHomePageToLoad();
             String title = driver.getTitle();
@@ -147,6 +150,12 @@ public class HomePage {
             return "";
         }
     }
+    
+    public void LogoNavigation() throws TimeoutException {
+    	waitForHomePageToLoad();
+    	logo.click();
+    	
+    }
 
     /** (Optional) Debug helper */
     public String getCurrentUrl() {
@@ -155,5 +164,18 @@ public class HomePage {
         } catch (Exception e) {
             return "";
         }
+    }
+    
+    public void HeaderMenuDisplay() throws TimeoutException {
+    	waitForHomePageToLoad();
+    	HeaderDestinations.isEnabled();
+    	System.out.println("Destination link is available and enabled");
+    	WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+    	HeaderHotels.isEnabled();
+    	System.out.println("Hotels link is available and enabled");
+    	HeaderOffers.isEnabled();
+    	System.out.println("Offers link is available and enabled");
+    	HeaderExperiences.isEnabled();
+    	System.out.println("Experiences link is available and enabled");
     }
 }
